@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create a separate API instance for request operations that doesn't require auth
 const requestApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app',
+  baseURL: import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app/api',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
@@ -164,7 +164,7 @@ export const requestService = {
     try {
       console.log('Fetching request by ID:', id);
       // Use the same API instance as vault service
-      const response = await requestApi.get<RequestData>(`/api/requests/${id}`);
+      const response = await requestApi.get<RequestData>(`/requests/${id}`);
       console.log('Request fetched successfully:', response.data);
       return response.data;
     } catch (error: any) {
