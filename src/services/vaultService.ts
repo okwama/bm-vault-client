@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create a separate API instance for vault operations that doesn't require auth
 const vaultApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app',
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
