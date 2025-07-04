@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" }
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" }
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/bm.jpeg",
+      "dest": "/bm.jpeg"
+    },
+    {
+      "src": "/lg.svg",
+      "dest": "/lg.svg"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Authorization",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Max-Age": "86400",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+      }
+    }
+  ],
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "installCommand": "npm install --legacy-peer-deps"
+}
