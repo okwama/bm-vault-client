@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app';
 
 export interface ATMLoadingTransaction {
   client_id: number;
@@ -33,7 +33,7 @@ const atmLoadingService = {
     try {
       console.log('Creating ATM loading transaction:', transactionData);
       
-      const response = await fetch(`${API_BASE_URL}/atm-loading`, {
+      const response = await fetch(`${API_BASE_URL}/api/atm-loading`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const atmLoadingService = {
   // Get all ATM loading transactions
   getAllATMLoading: async (): Promise<any[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/atm-loading`);
+      const response = await fetch(`${API_BASE_URL}/api/atm-loading`);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -76,7 +76,7 @@ const atmLoadingService = {
   // Get ATM loading history for a specific client
   getATMLoadingHistory: async (clientId: string): Promise<any[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/atm-loading/client/${clientId}`);
+      const response = await fetch(`${API_BASE_URL}/api/atm-loading/client/${clientId}`);
       
       if (!response.ok) {
         const errorData = await response.json();
@@ -94,7 +94,7 @@ const atmLoadingService = {
   // Get ATM loading history for a specific ATM
   getATMLoadingHistoryByATM: async (atmId: string): Promise<any[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/atm-loading/atm/${atmId}`);
+      const response = await fetch(`${API_BASE_URL}/api/atm-loading/atm/${atmId}`);
       
       if (!response.ok) {
         const errorData = await response.json();
