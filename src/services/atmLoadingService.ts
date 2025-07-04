@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://bm-vault-server.vercel.app/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app/api';
 
 export interface ATMLoadingTransaction {
   client_id: number;
