@@ -86,17 +86,22 @@ const safeGetItem = (key: string): string | null => {
 // Single request interceptor for authentication and debugging
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Add authentication token
-    const token = safeGetItem('token');
-    if (token) {
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
-      console.log('Added auth token to request:', {
-        token: token.substring(0, 10) + '...',
-        headers: config.headers
-      });
-    } else {
-      console.warn('No auth token found in localStorage');
+    // Don't add auth token to login/register requests
+    const isAuthEndpoint = config.url?.includes('/auth/login') || config.url?.includes('/auth/register');
+    
+    if (!isAuthEndpoint) {
+      // Add authentication token for protected endpoints
+      const token = safeGetItem('token');
+      if (token) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+        console.log('Added auth token to request:', {
+          token: token.substring(0, 10) + '...',
+          url: config.url
+        });
+      } else {
+        console.warn('No auth token found for protected endpoint:', config.url);
+      }
     }
 
     // Log request details
@@ -105,8 +110,8 @@ api.interceptors.request.use(
       baseURL: config.baseURL,
       fullURL: `${config.baseURL}${config.url}`,
       method: config.method,
-      headers: config.headers,
-      data: config.data
+      isAuthEndpoint,
+      hasAuthHeader: !!config.headers?.Authorization
     });
 
     return config;
@@ -143,21 +148,36 @@ api.interceptors.response.use(
 
       const { status, data } = error.response;
       
+      const isAuthEndpoint = error.config?.url?.includes('/auth/login') || error.config?.url?.includes('/auth/register');
+      const isLoginPage = window.location.pathname === '/login';
+      
       switch (status) {
         case 401:
-          // Only auto-redirect if we're not on the login page
-          if (!window.location.pathname.includes('/login')) {
-            console.log('Unauthorized access, clearing token and redirecting to login');
+          if (!isAuthEndpoint && !isLoginPage) {
+            // Only auto-redirect for non-auth endpoints when not on login page
+            // This means the user's session has expired
+            console.log('Session expired, clearing token and redirecting to login');
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = '/login';
+            
+            // Use a more SPA-friendly redirect approach
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 100);
+          } else if (isAuthEndpoint) {
+            console.log('Authentication failed: Invalid credentials');
           } else {
-            console.log('Login failed: Invalid credentials');
+            console.log('401 error on login page - handled by login component');
           }
           break;
         case 403:
+          console.log('Access forbidden - insufficient permissions');
+          break;
         case 404:
+          console.log('Resource not found');
+          break;
         case 500:
+          console.log('Internal server error');
           break;
       }
 
