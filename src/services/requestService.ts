@@ -1,9 +1,22 @@
 import api from './api';
 import axios from 'axios';
 
+// Get API base URL using the same logic as api.ts
+const getApiBaseUrl = (): string => {
+  const url = import.meta.env.VITE_API_URL;
+  if (!url) {
+    console.warn('VITE_API_URL is not defined, falling back to default URL');
+    return 'https://bm-vault-server.vercel.app/api';
+  }
+  return url.endsWith('/api') ? url : `${url}/api`;
+};
+
+const API_BASE_URL = getApiBaseUrl();
+console.log('Request service using API base URL:', API_BASE_URL);
+
 // Create a separate API instance for request operations that doesn't require auth
 const requestApi = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'https://bm-vault-server.vercel.app/api',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'

@@ -145,10 +145,15 @@ api.interceptors.response.use(
       
       switch (status) {
         case 401:
-          console.log('Unauthorized access, clearing token and redirecting to login');
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = '/login';
+          // Only auto-redirect if we're not on the login page
+          if (!window.location.pathname.includes('/login')) {
+            console.log('Unauthorized access, clearing token and redirecting to login');
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+          } else {
+            console.log('Login failed: Invalid credentials');
+          }
           break;
         case 403:
         case 404:

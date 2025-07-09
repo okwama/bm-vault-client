@@ -53,17 +53,19 @@ const LoginPage: React.FC = () => {
           }
         });
         if (error.response?.status === 401) {
-          setError('Invalid username or password');
+          setError('Invalid username or password. Please check your credentials and try again.');
+        } else if (error.response?.status === 400) {
+          setError(error.response?.data?.message || 'Invalid request. Please check your input.');
         } else if (error.response?.data?.message) {
           setError(error.response.data.message);
         } else if (!error.response) {
-          setError('No response from server. Please check your connection.');
+          setError('Unable to connect to server. Please check your internet connection and try again.');
         } else {
-          setError('An unexpected error occurred');
+          setError(`Login failed (${error.response.status}). Please try again or contact support.`);
         }
       } else {
         console.error('Non-Axios error:', error);
-        setError('An unexpected error occurred');
+        setError('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);
@@ -86,10 +88,20 @@ const LoginPage: React.FC = () => {
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form className="space-y-6" onSubmit={handleSubmit}>
               {error && (
-                <div className="bg-red-50 border-l-4 border-red-600 p-4 mb-4">
+                <div className="bg-red-50 border border-red-300 rounded-md p-4 mb-4">
                   <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
                     <div className="ml-3">
-                      <p className="text-sm text-red-700">{error}</p>
+                      <h3 className="text-sm font-medium text-red-800">
+                        Login Failed
+                      </h3>
+                      <div className="mt-2 text-sm text-red-700">
+                        <p>{error}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -104,9 +116,13 @@ const LoginPage: React.FC = () => {
                     name="username"
                     type="text"
                     required
+                    disabled={isLoading}
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                    onChange={(e) => {
+                      setUsername(e.target.value);
+                      if (error) setError(''); // Clear error when user starts typing
+                    }}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -122,9 +138,13 @@ const LoginPage: React.FC = () => {
                     type="password"
                     autoComplete="current-password"
                     required
+                    disabled={isLoading}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (error) setError(''); // Clear error when user starts typing
+                    }}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
